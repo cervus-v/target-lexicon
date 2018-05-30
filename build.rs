@@ -37,7 +37,18 @@ fn main() {
     let out_dir =
         PathBuf::from(env::var("OUT_DIR").expect("The OUT_DIR environment variable must be set"));
 
-    let target = env::var("TARGET").expect("The TARGET environment variable must be set");
+    let mut target = env::var("TARGET").expect("The TARGET environment variable must be set");
+
+    // As a temporary workaround for cross-compilation, if TARGET is a
+    // json path, make a guess based on CARGO_CFG_TARGET_* variables.
+    if target.starts_with("/") {
+        target = format!(
+            "{}-unknown-{}",
+            env::var("CARGO_CFG_TARGET_ARCH").unwrap(),
+            env::var("CARGO_CFG_TARGET_OS").unwrap(),
+        );
+    }
+
     let triple = Triple::from_str(&target).expect("can't parse host target");
     assert_eq!(target, triple.to_string(), "host is unrecognized");
 
