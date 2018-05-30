@@ -34,9 +34,8 @@ mod parse_error {
 use triple::Triple;
 
 fn main() {
-    let out_dir = PathBuf::from(env::var("OUT_DIR").expect(
-        "The OUT_DIR environment variable must be set",
-    ));
+    let out_dir =
+        PathBuf::from(env::var("OUT_DIR").expect("The OUT_DIR environment variable must be set"));
 
     let target = env::var("TARGET").expect("The TARGET environment variable must be set");
     let triple = Triple::from_str(&target).expect("can't parse host target");
