@@ -7,7 +7,7 @@ use serde_json::Value;
 use std::env;
 use std::fs::File;
 use std::io::{self, prelude::*, Write};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
 extern crate serde_json;
@@ -42,13 +42,15 @@ fn main() {
 
     let target = env::var("TARGET").expect("The TARGET environment variable must be set");
 
+    let pwd = env::var("PWD").expect("The PWD environment variable must be set");
+
     let triple = match Triple::from_str(&target) {
         Ok(triple) => {
             assert_eq!(target, triple.to_string(), "host is unrecognized");
             triple
         }
         Err(_) => {
-            let mut file = File::open(&target).expect("error opening target file");
+            let mut file = File::open(Path::new(&pwd).join(&format!("{}.json", target))).expect("error opening target file");
             let mut json = String::new();
             file.read_to_string(&mut json)
                 .expect("error reading target file");
